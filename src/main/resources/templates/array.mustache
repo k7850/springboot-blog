@@ -6,7 +6,16 @@
     <title>Document</title>
   </head>
   <body>
-    <h1>test 파일 연결확인</h1>
-    <h2>{{ username }}</h2>
+    <h1>array 파일 연결확인</h1>
+    {{#list}}
+    {{.}}
+    {{/list}}
+
+    <br />
+    <br />
+    {{list.1}}
+    {{list.2}}
+    <br />
+    <br />
   </body>
 </html>
