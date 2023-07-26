@@ -1,11 +1,11 @@
 {{> /layout/header}}
 
 <div class="container p-4">
-  <div class="card">
+  <div class="card bg-light">
 
 
     <div class="card-header">
-      <div class="row align-items-center">
+      <div class="row align-items-center mt-1 mb-1">
         <div class="col-auto">
           <div class="form-control">
             작성자
@@ -34,7 +34,7 @@
   </div>
 
 
-  <div class="card mt-3">
+  <div class="card mt-3 bg-light">
     <form action="/join" method="post" enctype="application/x-www-form-urlencoded" class="d-flex">
       <div class="card-body flex-grow-1">
         <input type="text" class="form-control" placeholder="Enter reply" name="reply">
@@ -44,7 +44,27 @@
   </div>
 
 
-  <div class="card mt-3">
+  <div class="card mt-3 bg-light">
+      <div class="card-body row align-items-center">
+        <div class="col-auto">
+          <div class="form-control">
+            작성자
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-control">
+            댓글내용
+          </div>
+        </div>
+        <div class="col-auto">
+          <a href="#" class="btn btn-warning text-white">수정</a>
+          <a href="#" class="btn btn-danger">삭제</a>
+        </div>
+    </div>
+  </div>
+
+
+  <div class="card mt-3 bg-light">
       <div class="card-body row align-items-center">
         <div class="col-auto">
           <div class="form-control">
