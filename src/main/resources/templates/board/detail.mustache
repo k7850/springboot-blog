@@ -1,0 +1,69 @@
+{{> /layout/header}}
+
+<div class="container p-4">
+  <div class="card">
+
+
+    <div class="card-header">
+      <div class="row align-items-center">
+        <div class="col-auto">
+          <div class="form-control">
+            작성자
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-control">
+            제목
+          </div>
+        </div>
+        <div class="col-auto">
+          <a href="#" class="btn btn-warning text-white">수정</a>
+          <a href="#" class="btn btn-danger">삭제</a>
+        </div>
+      </div>
+    </div>
+    
+    
+    <div class="card-body">
+      <div>
+        <div class="form-control">
+          내용ㅁㄴㅇㅁㄴㅠㅇㅁ<br />ㄴㅇ<br /><br /><br /><br />sdf<br /><br /><br /><br /><br /><br />asdasd
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="card mt-3">
+    <form action="/join" method="post" enctype="application/x-www-form-urlencoded" class="d-flex">
+      <div class="card-body flex-grow-1">
+        <input type="text" class="form-control" placeholder="Enter reply" name="reply">
+      </div>
+      <div class="p-3"><button type="submit" class="btn btn-primary">댓글 등록</button></div>
+    </form>
+  </div>
+
+
+  <div class="card mt-3">
+      <div class="card-body row align-items-center">
+        <div class="col-auto">
+          <div class="form-control">
+            작성자
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-control">
+            댓글내용
+          </div>
+        </div>
+        <div class="col-auto">
+          <a href="#" class="btn btn-warning text-white">수정</a>
+          <a href="#" class="btn btn-danger">삭제</a>
+        </div>
+    </div>
+  </div>
+
+
+</div>
+
+{{> /layout/footer}}
