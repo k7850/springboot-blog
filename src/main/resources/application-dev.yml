@@ -13,7 +13,12 @@ spring:
   h2:
     console:
       enabled: true
+  sql:
+    init:
+      data-locations:
+      - classpath:db/data.sql # classpath:resources폴더 # 더미데이터 추가하려면 1
   jpa:
+    defer-datasource-initialization: true # 더미데이터 추가하려면2
     hibernate:
       ddl-auto: create  # create 하면 db table 매번 새로만듬   /   update
     show-sql: true
