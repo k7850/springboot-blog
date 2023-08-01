@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import shop.mtcoding.blog.dto.JoinDTO;
+import shop.mtcoding.blog.dto.LoginDTO;
+import shop.mtcoding.blog.model.User;
 
 // BoardController, UserController, UserRepository : 내가 어노테이션 적어서 IoC에 올린거
 // EntityManager, HttpSession : 자동으로 만들어진거
@@ -16,9 +18,19 @@ import shop.mtcoding.blog.dto.JoinDTO;
 // repository는 DAO랑 비슷한 개념
 @Repository
 public class UserRepository {
-
     @Autowired
     private EntityManager em;
+
+
+
+    public User findByUsernameAndPassword(LoginDTO loginDTO){
+        Query query = em.createNativeQuery("select * from user_tb where username=:username and password=:password", User.class);
+        query.setParameter("username", loginDTO.getUsername());
+        query.setParameter("password", loginDTO.getPassword());
+        return (User) query.getSingleResult();
+    }
+
+
 
     @Transactional // db작업 전부 정상적으로 종료되면 커밋, 예외가 발생하면 롤백 / DB 변경(C,U,D) 있는데 @Transactional 빼먹으면 오류뜸
     public void save(JoinDTO joinDTO) {

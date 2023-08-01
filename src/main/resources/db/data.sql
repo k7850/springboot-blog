@@ -1,1 +1,1 @@
-insert into user_tb(username, password, email) values('dummy1', '1234', 'dummy@gmail.com');
+insert into user_tb(username, password, email) values('ssar', '1234', 'ssar@gmail.com');

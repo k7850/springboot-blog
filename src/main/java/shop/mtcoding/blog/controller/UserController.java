@@ -4,13 +4,17 @@ import java.io.BufferedReader;
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import shop.mtcoding.blog.dto.JoinDTO;
+import shop.mtcoding.blog.dto.LoginDTO;
+import shop.mtcoding.blog.model.User;
 import shop.mtcoding.blog.repository.UserRepository;
 
 @Controller // application.yml 에 적은 경로의 파일을 줌
@@ -19,6 +23,52 @@ public class UserController {
     
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private HttpSession session; // request는 가방, session은 서랍
+
+    
+    @ResponseBody
+    @GetMapping("/test/login")
+    public String testLogin() {
+        User sessionUser = (User) session.getAttribute("sessionUser");
+        if (sessionUser == null) {
+            return "로그인이 되지 않았습니다";
+        } else {
+            return "로그인 됨 : " + sessionUser.getUsername();
+        }
+    }
+
+    @PostMapping("/login")
+    public String login(LoginDTO loginDTO){
+
+        // validation check (유효성 검사)
+        if(loginDTO.getUsername() == null || loginDTO.getUsername().isEmpty()){
+            return "redirect:/40x";
+        }
+        if(loginDTO.getPassword() == null || loginDTO.getPassword().isEmpty()){
+            return "redirect:/40x";
+        }
+
+        // 핵심 기능
+        System.out.println("테스트 username:"+loginDTO.getUsername());
+        System.out.println("테스트 password:"+loginDTO.getPassword());
+
+        try {
+            User user = userRepository.findByUsernameAndPassword(loginDTO);
+            session.setAttribute("sessionUser", user);
+
+            System.out.println("테스트성공"+user.getId()+"/"+user.getUsername()+"/"+user.getPassword()+"/"+user.getEmail());
+            return "redirect:/";
+        } catch (Exception e) {
+            System.out.println("테스트 실패");
+            return "redirect:/exLogin";
+        }
+    }
+
+
+
+
 
 /////////////////////////////////////////////////////////////////////////////////
     // 실무에서
