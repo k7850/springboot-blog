@@ -1,5 +1,7 @@
 package shop.mtcoding.blog.repository;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
@@ -25,9 +27,16 @@ public class UserRepository {
 
     public User findByUsernameAndPassword(LoginDTO loginDTO){
         Query query = em.createNativeQuery("select * from user_tb where username=:username and password=:password", User.class);
+        // User에 매핑해서 반환
+
         query.setParameter("username", loginDTO.getUsername());
         query.setParameter("password", loginDTO.getPassword());
-        return (User) query.getSingleResult();
+
+        
+        return (User)query.getSingleResult(); // getSingleResult() : 엔티티 1개만 받아올 때
+
+        // List<User> userList = query.getResultList(); // getResultList() : 엔티티 여러개를 List로 받아올 때
+        // return userList.get(0);
     }
 
 

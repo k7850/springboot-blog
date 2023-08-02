@@ -1,9 +1,5 @@
 package shop.mtcoding.blog.controller;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,14 +47,11 @@ public class UserController {
         }
 
         // 핵심 기능
-        System.out.println("테스트 username:"+loginDTO.getUsername());
-        System.out.println("테스트 password:"+loginDTO.getPassword());
-
         try {
             User user = userRepository.findByUsernameAndPassword(loginDTO);
             session.setAttribute("sessionUser", user);
 
-            System.out.println("테스트성공"+user.getId()+"/"+user.getUsername()+"/"+user.getPassword()+"/"+user.getEmail());
+            // System.out.println("테스트성공"+user.getId()+"/"+user.getUsername()+"/"+user.getPassword()+"/"+user.getEmail());
             return "redirect:/";
         } catch (Exception e) {
             System.out.println("테스트 실패");
@@ -146,6 +139,7 @@ public class UserController {
 
     @GetMapping("/logout")
     public String logout(){
+        session.invalidate();
         return "redirect:/";
     }
 }

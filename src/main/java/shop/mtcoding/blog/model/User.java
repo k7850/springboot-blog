@@ -9,10 +9,12 @@ import javax.persistence.Table;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 
 @Getter
 @Setter
+@ToString
 
 @Entity // 이 클래스가 엔티티임을 나타냄. 데이터베이스의 테이블과 자동으로 매핑되는 객체임을 의미
         // application.yml의 ddl-auto가 create면 만들어줌

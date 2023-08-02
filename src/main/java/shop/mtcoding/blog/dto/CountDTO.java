@@ -1,5 +1,6 @@
 package shop.mtcoding.blog.dto;
 
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -16,8 +17,6 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class JoinDTO {
-    private String username;
-    private String password;
-    private String email;
+public class CountDTO {
+    private Integer Count;
 }

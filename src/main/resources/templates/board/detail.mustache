@@ -3,36 +3,50 @@
 <div class="container p-4">
   <div class="card bg-light">
 
-
+    {{#board}}
     <div class="card-header">
       <div class="row align-items-center mt-1 mb-1">
         <div class="col-auto">
           <div class="form-control">
-            작성자
+            {{user.username}}
           </div>
         </div>
+
         <div class="col">
           <div class="form-control">
-            제목
+            {{title}}
           </div>
         </div>
+
+        {{#pageOwner}}
         <div class="col-auto">
-          <a href="#" class="btn btn-warning text-white">수정</a>
-          <a href="#" class="btn btn-danger">삭제</a>
+          <div class="btn-group" role="group">
+
+            <form action="/board/{{id}}/update" method="get">
+              <button type="submit" class="btn btn-warning text-white">수정</button>
+            </form>
+
+            <form action="/board/{{id}}/delete" method="post" class="px-1">
+              <button type="submit" class="btn btn-danger text-white">삭제</button>
+            </form>
+
+          </div>
         </div>
+        {{/pageOwner}}
+
       </div>
     </div>
     
     
     <div class="card-body">
       <div>
-        <div class="form-control">
-          내용ㅁㄴㅇㅁㄴㅠㅇㅁ<br />ㄴㅇ<br /><br /><br /><br />sdf<br /><br /><br /><br /><br /><br />asdasd
+        <div class="form-control" style="min-height:300px">
+          {{content}}
         </div>
       </div>
     </div>
   </div>
-
+  {{/board}}
 
   <div class="card mt-3 bg-light">
     <form action="/join" method="post" enctype="application/x-www-form-urlencoded" class="d-flex">
