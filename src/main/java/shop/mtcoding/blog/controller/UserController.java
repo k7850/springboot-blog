@@ -1,15 +1,18 @@
 package shop.mtcoding.blog.controller;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import shop.mtcoding.blog.dto.JoinDTO;
 import shop.mtcoding.blog.dto.LoginDTO;
+import shop.mtcoding.blog.dto.UserUpdateDTO;
 import shop.mtcoding.blog.model.User;
 import shop.mtcoding.blog.repository.UserRepository;
 
@@ -132,14 +135,82 @@ public class UserController {
         return "/user/loginForm";
     }
     
-    @GetMapping("/user/updateForm")
-    public String userUpdateForm(){
-        return "/user/updateForm";
-    }
 
     @GetMapping("/logout")
     public String logout(){
         session.invalidate();
         return "redirect:/";
     }
+
+
+    @GetMapping("/user/{id}/updateForm")
+    public String userUpdateForm(@PathVariable Integer id, HttpServletRequest request){
+
+        User user = userRepository.findById(id);
+
+        // 1. 인증검사 (로그인 상태인가)
+        User sessionUser = (User) session.getAttribute("sessionUser");
+        if (sessionUser == null) {
+            return "redirect:/loginForm"; // 401 에러
+        }
+
+        // 2. 권한검사 (로그인과 수정하려는게 일치한가)
+        if (sessionUser.getId() != user.getId()) {
+            return "redirect:/40x"; // 403 에러 권한없음
+        }
+        
+        request.setAttribute("user", user);
+
+        return "/user/updateForm";
+    }
+
+    
+    
+    
+    @PostMapping("/user/{id}/update")
+    public String userUpdate(@PathVariable Integer id, UserUpdateDTO DTO){
+     
+        User user = userRepository.findById(id);
+
+        // db수정이 있으면 유효성 검사 해야함
+        if (DTO.getPassword() == null || DTO.getPassword().isEmpty()) {
+            return "redirect:/40x";
+        }
+        if (DTO.getNewPassword() == null || DTO.getNewPassword().isEmpty()) {
+            return "redirect:/40x";
+        }
+        if (DTO.getEmail() == null || DTO.getEmail().isEmpty()) {
+            return "redirect:/40x";
+        }
+        
+        // 1. 인증검사 (로그인 상태인가)
+        User sessionUser = (User) session.getAttribute("sessionUser");
+        if (sessionUser == null) {
+            return "redirect:/loginForm"; // 401 에러
+        }
+
+        // 2. 권한검사 (로그인과 수정하려는게 일치한가)
+        if (sessionUser.getId() != user.getId()) {
+            return "redirect:/40x"; // 403 에러 권한없음
+        }
+
+
+
+        if(!(DTO.getPassword().equals(user.getPassword()))){
+            return "redirect:/user/"+id+"/updateForm";
+        }
+
+        userRepository.updateUser(DTO, id);
+
+        session.invalidate();
+        return "redirect:/loginForm";
+    }
+
+
+
+
+
+
+
+    
 }

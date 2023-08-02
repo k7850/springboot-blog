@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import shop.mtcoding.blog.dto.UpdateDTO;
 import shop.mtcoding.blog.dto.WriteDTO;
 import shop.mtcoding.blog.model.Board;
 import shop.mtcoding.blog.model.User;
@@ -28,7 +29,6 @@ public class BoardController {
     @Autowired
     private BoardRepository boardRepository;
 
-
     @GetMapping({ "/", "/board" })
     public String index(@RequestParam(defaultValue = "0") Integer page, HttpServletRequest request) {
         // @RequestParam(defaultValue = "0") : 디폴트값 0으로 (/?page=0)
@@ -40,7 +40,7 @@ public class BoardController {
         int totalCount = boardRepository.count();
 
         boolean last = false;
-        if(totalCount<=(page+1)*3){
+        if (totalCount <= (page + 1) * 3) {
             last = true;
         }
 
@@ -93,7 +93,7 @@ public class BoardController {
         Board board = boardRepository.findById(id); // MVC중 M (MVC에서 모델은 Board, User등등 만든 모델이 아니라 비지니스로직)
 
         boolean pageOwner = false;
-        if(sessionUser != null){
+        if (sessionUser != null) {
             pageOwner = sessionUser.getId() == board.getUser().getId();
         }
 
@@ -103,44 +103,77 @@ public class BoardController {
     }
 
     @PostMapping("/board/{id}/delete")
-    public String deleteBoard(@PathVariable Integer id) {
+    public String deleteBoard(@PathVariable Integer id) { // 1. PathVariable 값 받기
 
+
+        // 2. 인증검사
+        // session에 접근해서 sessionUser 키값 가져오기
+        // null이면 로그인페이지로 리다이랙트
         User sessionUser = (User) session.getAttribute("sessionUser");
-        Board board = boardRepository.findById(id);
-        if (sessionUser == null || sessionUser.getId() != board.getUser().getId()) {
-            return "redirect:/loginForm";
+        if (sessionUser == null) {
+            return "redirect:/loginForm"; // 401 에러
         }
 
+        // 3. 권한검사
+        Board board = boardRepository.findById(id);
+        if (sessionUser.getId() != board.getUser().getId()) {
+            return "redirect:/40x"; // 403 에러 권한없음
+        }
+
+        // 4. 모델에 접근해서 삭제
         boardRepository.deleteById(id);
+
         return "redirect:/";
     }
 
-    @GetMapping("/board/{id}/update")
-    public String boardUpdateById(@PathVariable Integer id, HttpServletRequest request) {
+    @GetMapping("/board/{id}/updateForm")
+    public String updateForm(@PathVariable Integer id, HttpServletRequest request) {
 
-        User sessionUser = (User) session.getAttribute("sessionUser");
         Board board = boardRepository.findById(id);
-        if (sessionUser == null || sessionUser.getId() != board.getUser().getId()) {
-            return "redirect:/loginForm";
+
+        // 1. 인증검사 (로그인 상태인가)
+        User sessionUser = (User) session.getAttribute("sessionUser");
+        if (sessionUser == null) {
+            return "redirect:/loginForm"; // 401 에러
+        }
+
+        // 2. 권한검사 (로그인과 수정하려는게 일치한가)
+        if (sessionUser.getId() != board.getUser().getId()) {
+            return "redirect:/40x"; // 403 에러 권한없음
         }
 
         request.setAttribute("board", board);
-        return "board/boardUpdateForm";
+        return "board/updateForm";
     }
 
     @PostMapping("/board/{id}/update")
-    public String boardUpdate(@PathVariable Integer id, Board board) {
+    public String boardUpdate(@PathVariable Integer id, UpdateDTO updateDTO) {
 
-        board.setId(id);
-
-        board.setUser(boardRepository.findById(board.getId()).getUser());
-        User sessionUser = (User) session.getAttribute("sessionUser");
-        if (sessionUser == null || sessionUser.getId() != board.getUser().getId()) {
-            return "redirect:/loginForm";
+        // db수정이 있으면 유효성 검사 해야함
+        if (updateDTO.getTitle() == null || updateDTO.getTitle().isEmpty()) {
+            return "redirect:/40x";
+        }
+        if (updateDTO.getContent() == null) {
+            return "redirect:/40x";
         }
 
-        boardRepository.updateBoard(board);
-        return "redirect:/board/"+id;
+        // 1. 인증검사
+        User sessionUser = (User) session.getAttribute("sessionUser");
+        if (sessionUser == null) {
+            return "redirect:/loginForm"; // 401 에러
+        }
+
+        // 2. 권한검사
+        if (sessionUser.getId() != boardRepository.findById(id).getUser().getId()) {
+            return "redirect:/40x"; // 403 에러 권한없음
+        }
+
+        // 핵심로직
+        boardRepository.updateBoard(updateDTO, id);
+        return "redirect:/board/" + id;
     }
+
+
+
 
 }

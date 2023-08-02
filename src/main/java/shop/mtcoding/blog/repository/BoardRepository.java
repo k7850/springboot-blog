@@ -12,8 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import shop.mtcoding.blog.dto.CountDTO;
 import shop.mtcoding.blog.dto.LoginDTO;
+import shop.mtcoding.blog.dto.UpdateDTO;
 import shop.mtcoding.blog.dto.WriteDTO;
 import shop.mtcoding.blog.model.Board;
 import shop.mtcoding.blog.model.User;
@@ -106,11 +106,11 @@ public class BoardRepository {
     }
     
     @Transactional
-    public void updateBoard(Board board){
+    public void updateBoard(UpdateDTO updateDTO, Integer id){
         Query query = em.createNativeQuery("update board_tb set title=:title, content=:content where id=:id");
-        query.setParameter("id", board.getId());
-        query.setParameter("title", board.getTitle());
-        query.setParameter("content", board.getContent());
+        query.setParameter("id", id);
+        query.setParameter("title", updateDTO.getTitle());
+        query.setParameter("content", updateDTO.getContent());
         query.executeUpdate();
     }
 

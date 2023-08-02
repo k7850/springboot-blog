@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import shop.mtcoding.blog.dto.JoinDTO;
 import shop.mtcoding.blog.dto.LoginDTO;
+import shop.mtcoding.blog.dto.UserUpdateDTO;
+import shop.mtcoding.blog.model.Board;
 import shop.mtcoding.blog.model.User;
 
 // BoardController, UserController, UserRepository : 내가 어노테이션 적어서 IoC에 올린거
@@ -49,5 +51,23 @@ public class UserRepository {
         query.setParameter("email", joinDTO.getEmail());
         query.executeUpdate();
     }
+    
+    
+    public User findById(int id){
+        Query query = em.createNativeQuery("select * from user_tb where id=:id", User.class);
+        query.setParameter("id", id);
+        return (User)query.getSingleResult();
+    }
+
+    
+    @Transactional
+    public void updateUser(UserUpdateDTO DTO, Integer id){
+        Query query = em.createNativeQuery("update user_tb set password=:password, email=:email where id=:id");
+        query.setParameter("id", id);
+        query.setParameter("password", DTO.getNewPassword());
+        query.setParameter("email", DTO.getEmail());
+        query.executeUpdate();
+    }
+
 
 }

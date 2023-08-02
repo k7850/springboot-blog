@@ -22,7 +22,7 @@
         <div class="col-auto">
           <div class="btn-group" role="group">
 
-            <form action="/board/{{id}}/update" method="get">
+            <form action="/board/{{id}}/updateForm" method="get">
               <button type="submit" class="btn btn-warning text-white">수정</button>
             </form>
 
@@ -51,7 +51,7 @@
   <div class="card mt-3 bg-light">
     <form action="/join" method="post" enctype="application/x-www-form-urlencoded" class="d-flex">
       <div class="card-body flex-grow-1">
-        <input type="text" class="form-control" placeholder="Enter reply" name="reply">
+        <input type="text" class="form-control" placeholder="댓글을 입력하세요." name="reply">
       </div>
       <div class="p-3"><button type="submit" class="btn btn-primary">댓글 등록</button></div>
     </form>

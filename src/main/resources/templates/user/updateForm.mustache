@@ -6,15 +6,18 @@
     <div class="card">
         <div class="card-header"><b>회원수정을 해주세요</b></div>
         <div class="card-body">
-            <form action="/user/update" method="post" enctype="application/x-www-form-urlencoded">
+            <form action="/user/{{user.id}}/update" method="post" enctype="application/x-www-form-urlencoded">
                 <div class="mb-3">
-                    <input type="text" class="form-control" placeholder="{{sessionUser.username}}" name="username" disabled>
+                    <input type="text" class="form-control" placeholder="{{user.username}}" name="username" disabled>
                 </div>
                 <div class="mb-3">
-                    <input type="password" class="form-control" placeholder="Enter password" name="password">
+                    <input type="password" class="form-control" placeholder="현재 비밀번호를 입력하세요." name="password" required maxlength="20">
                 </div>
                 <div class="mb-3">
-                    <input type="email" class="form-control" placeholder="Enter email" value="{{sessionUser.email}}" name="email">
+                    <input type="password" class="form-control" placeholder="변경할 비밀번호를 입력하세요." name="newPassword" required maxlength="20">
+                </div>
+                <div class="mb-3">
+                    <input type="email" class="form-control" placeholder="변경할 이메일을 입력하세요." value="{{user.email}}" name="email" required maxlength="20">
                 </div>
                 <button type="submit" class="btn btn-primary form-control">회원수정</button>
             </form>
