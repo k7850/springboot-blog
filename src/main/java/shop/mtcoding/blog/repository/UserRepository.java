@@ -25,49 +25,59 @@ public class UserRepository {
     @Autowired
     private EntityManager em;
 
+    public User findByUsername(String username) {
+        try {
+            Query query = em.createNativeQuery("select * from user_tb where username=:username",
+                    User.class);
+            query.setParameter("username", username);
+            return (User) query.getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
-
-    public User findByUsernameAndPassword(LoginDTO loginDTO){
-        Query query = em.createNativeQuery("select * from user_tb where username=:username and password=:password", User.class);
+    public User findByUsernameAndPassword(LoginDTO loginDTO) {
+        Query query = em.createNativeQuery("select * from user_tb where username=:username and password=:password",
+                User.class);
         // User에 매핑해서 반환
 
         query.setParameter("username", loginDTO.getUsername());
         query.setParameter("password", loginDTO.getPassword());
 
-        
-        return (User)query.getSingleResult(); // getSingleResult() : 엔티티 1개만 받아올 때
+        return (User) query.getSingleResult(); // getSingleResult() : 엔티티 1개만 받아올 때
 
-        // List<User> userList = query.getResultList(); // getResultList() : 엔티티 여러개를 List로 받아올 때
+        // List<User> userList = query.getResultList(); // getResultList() : 엔티티 여러개를
+        // List로 받아올 때
         // return userList.get(0);
     }
 
-
-
     @Transactional // db작업 전부 정상적으로 종료되면 커밋, 예외가 발생하면 롤백 / DB 변경(C,U,D) 있는데 @Transactional 빼먹으면 오류뜸
     public void save(JoinDTO joinDTO) {
-        Query query =  em.createNativeQuery("insert into user_tb(username, password, email) values(:username, :password, :email)");
+        System.out.println("테스트:" + 1);
+        Query query = em.createNativeQuery(
+                "insert into user_tb(username, password, email) values(:username, :password, :email)");
+        System.out.println("테스트:" + 2);
         query.setParameter("username", joinDTO.getUsername());
         query.setParameter("password", joinDTO.getPassword());
         query.setParameter("email", joinDTO.getEmail());
-        query.executeUpdate();
-    }
-    
-    
-    public User findById(int id){
-        Query query = em.createNativeQuery("select * from user_tb where id=:id", User.class);
-        query.setParameter("id", id);
-        return (User)query.getSingleResult();
+        System.out.println("테스트:" + 3);
+        query.executeUpdate(); // 쿼리를 전송 (DBMS에게)
+        System.out.println("테스트:" + 4);
     }
 
-    
+    public User findById(int id) {
+        Query query = em.createNativeQuery("select * from user_tb where id=:id", User.class);
+        query.setParameter("id", id);
+        return (User) query.getSingleResult();
+    }
+
     @Transactional
-    public void updateUser(UserUpdateDTO DTO, Integer id){
+    public void updateUser(UserUpdateDTO DTO, Integer id) {
         Query query = em.createNativeQuery("update user_tb set password=:password, email=:email where id=:id");
         query.setParameter("id", id);
         query.setParameter("password", DTO.getNewPassword());
         query.setParameter("email", DTO.getEmail());
         query.executeUpdate();
     }
-
 
 }

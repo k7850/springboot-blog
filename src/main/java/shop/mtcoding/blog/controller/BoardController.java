@@ -40,7 +40,7 @@ public class BoardController {
         int totalCount = boardRepository.count();
 
         boolean last = false;
-        if (totalCount <= (page + 1) * 3) {
+        if (totalCount <= (page + 1) * 6) {
             last = true;
         }
 

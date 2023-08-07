@@ -58,7 +58,7 @@ public class BoardRepository {
     }
 
     public List<Board> findAll(int page){
-        final int SIZE = 3;
+        final int SIZE = 6;
         // page는 시작 인덱스 번호(1아니고 0부터 시작), size는 페이징할 개수(페이지 넘겨도 보이는 글 개수는 같으니까 상수가 좋다)
         Query query = em.createNativeQuery("select * from board_tb order by id desc limit :page, :size", Board.class);
         query.setParameter("page", page*SIZE);

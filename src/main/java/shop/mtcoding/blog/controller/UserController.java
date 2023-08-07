@@ -1,9 +1,12 @@
 package shop.mtcoding.blog.controller;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,6 +30,22 @@ public class UserController {
     private HttpSession session; // request는 가방, session은 서랍
 
     
+
+
+    //localhost:8080/check?username=ssar
+    @GetMapping("/check")
+    // ResponseEntity쓰면 리스펀스바디 안써도 되고 내가 직접 안넣어줘도 됨
+    public ResponseEntity<String> check(String username){
+        User user = userRepository.findByUsername(username);
+        if (user != null) {
+            return new ResponseEntity<String>("유저네임이 중복 되었습니다", HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<String>("유저네임을 사용할 수 있습니다", HttpStatus.OK);
+    }
+
+
+
+
     @ResponseBody
     @GetMapping("/test/login")
     public String testLogin() {
@@ -82,12 +101,12 @@ public class UserController {
             return "redirect:/40x";
         }
 
-        try {
-            userRepository.save(joinDTO); // 핵심 기능
-        } catch (Exception e) {
+        // DB에 해당 username이 있는지 체크
+        User user = userRepository.findByUsername(joinDTO.getUsername());
+        if(user!=null){
             return "redirect:/50x";
         }
-
+        userRepository.save(joinDTO); // 핵심 기능
         return "redirect:/loginForm";
     }
     // 
@@ -171,6 +190,9 @@ public class UserController {
     public String userUpdate(@PathVariable Integer id, UserUpdateDTO DTO){
      
         User user = userRepository.findById(id);
+
+        System.out.println("테스트:DTO:"+DTO);
+        System.out.println("테스트:user:"+user);
 
         // db수정이 있으면 유효성 검사 해야함
         if (DTO.getPassword() == null || DTO.getPassword().isEmpty()) {
