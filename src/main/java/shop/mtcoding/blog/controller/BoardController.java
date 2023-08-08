@@ -1,6 +1,9 @@
 package shop.mtcoding.blog.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -11,11 +14,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import shop.mtcoding.blog.dto.BoardDetailDTO;
 import shop.mtcoding.blog.dto.UpdateDTO;
 import shop.mtcoding.blog.dto.WriteDTO;
 import shop.mtcoding.blog.model.Board;
+import shop.mtcoding.blog.model.Reply;
 import shop.mtcoding.blog.model.User;
 import shop.mtcoding.blog.repository.BoardRepository;
+import shop.mtcoding.blog.repository.ReplyRepository;
+
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -28,6 +35,9 @@ public class BoardController {
 
     @Autowired
     private BoardRepository boardRepository;
+
+    @Autowired
+    private ReplyRepository replyRepository;
 
     @GetMapping({ "/", "/board" })
     public String index(@RequestParam(defaultValue = "0") Integer page, HttpServletRequest request) {
@@ -90,17 +100,33 @@ public class BoardController {
     public String detail(@PathVariable Integer id, HttpServletRequest request) { // MVC중 C
         User sessionUser = (User) session.getAttribute("sessionUser");
 
-        Board board = boardRepository.findById(id); // MVC중 M (MVC에서 모델은 Board, User등등 만든 모델이 아니라 비지니스로직)
+        List<BoardDetailDTO> dtos = null;
+        if (sessionUser == null) {
+            dtos = boardRepository.findByIdJoinReply(id, null);
+        } else {
+            dtos = boardRepository.findByIdJoinReply(id, sessionUser.getId());
+        }
 
         boolean pageOwner = false;
         if (sessionUser != null) {
-            pageOwner = sessionUser.getId() == board.getUser().getId();
+            pageOwner = sessionUser.getId() == dtos.get(0).getBoardUserId();
         }
 
-        request.setAttribute("board", board);
+        request.setAttribute("dtos", dtos);
         request.setAttribute("pageOwner", pageOwner);
+
+        if(sessionUser != null){
+            request.setAttribute("sessionUserId", sessionUser.getId());
+        } else{
+            request.setAttribute("sessionUserId", -1);
+        }
+
+        request.setAttribute("nameUser", boardRepository.findById(id).getUser().getUsername());
         return "board/detail"; // MVC중 V
     }
+
+
+
 
     @PostMapping("/board/{id}/delete")
     public String deleteBoard(@PathVariable Integer id) { // 1. PathVariable 값 받기

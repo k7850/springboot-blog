@@ -2,16 +2,19 @@ package shop.mtcoding.blog.repository;
 
 import java.math.BigInteger;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.hibernate.type.descriptor.sql.BigIntTypeDescriptor;
+import org.qlrm.mapper.JpaResultMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import shop.mtcoding.blog.dto.BoardDetailDTO;
 import shop.mtcoding.blog.dto.LoginDTO;
 import shop.mtcoding.blog.dto.UpdateDTO;
 import shop.mtcoding.blog.dto.WriteDTO;
@@ -22,6 +25,59 @@ import shop.mtcoding.blog.model.User;
 public class BoardRepository {
     @Autowired
     private EntityManager em;
+
+
+
+
+
+    public List<BoardDetailDTO> findByIdJoinReply(Integer boardId, Integer sessionUserId) {
+        String sql = "select ";
+        sql += "b.id board_id, ";
+        sql += "b.content board_content, ";
+        sql += "b.title board_title, ";
+        sql += "b.user_id board_user_id, ";
+        sql += "r.id reply_id, ";
+        sql += "r.comment reply_comment, ";
+        sql += "r.user_id reply_user_id, ";
+        sql += "ru.username reply_user_username, ";
+        if (sessionUserId == null) {
+            sql += "false reply_owner ";
+        } else {
+            sql += "case when r.user_id = :sessionUserId then true else false end reply_owner ";
+        }
+        sql += "from board_tb b left outer join reply_tb r ";
+        sql += "on b.id = r.board_id ";
+        sql += "left outer join user_tb ru ";
+        sql += "on r.user_id = ru.id ";
+        sql += "where b.id = :boardId ";
+        sql += "order by r.id desc";
+        Query query = em.createNativeQuery(sql);
+        query.setParameter("boardId", boardId);
+        if (sessionUserId != null) {
+            query.setParameter("sessionUserId", sessionUserId);
+        }
+
+        // List<Object[]> result = query.getResultList();
+        // List<BoardDetailDTO> dtos = new ArrayList<>();
+        // for (Object[] a : result) {
+        //     BoardDetailDTO dto = new BoardDetailDTO();
+        //     dto.setBoardId((Integer) a[0]);
+        //     dto.setBoardContent((String) a[1]);
+        //     dto.setBoardTitle((String) a[2]);
+        //     dto.setBoardUserId((Integer) a[3]);
+        //     dto.setReplyId((Integer) a[4]);
+        //     dto.setReplyComment((String) a[5]);
+        //     dto.setReplyUserId((Integer) a[6]);
+        //     dto.setReplyUserUsername((String) a[7]);
+        //     dto.setReplyOwner((Boolean) a[8]);
+        //     dtos.add(dto);
+        // }
+        
+        JpaResultMapper mapper = new JpaResultMapper();
+        List<BoardDetailDTO> dtos = mapper.list(query, BoardDetailDTO.class);
+
+        return dtos;
+    }
 
     @Transactional
     public void save(WriteDTO writeDTO, Integer userId){

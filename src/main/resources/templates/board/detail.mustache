@@ -3,18 +3,17 @@
 <div class="container p-4">
   <div class="card bg-light">
 
-    {{#board}}
     <div class="card-header">
       <div class="row align-items-center mt-1 mb-1">
         <div class="col-auto">
           <div class="form-control">
-            {{user.username}}
+            {{nameUser}}
           </div>
         </div>
 
         <div class="col">
           <div class="form-control">
-            {{title}}
+            {{dtos.0.boardTitle}}
           </div>
         </div>
 
@@ -22,11 +21,11 @@
         <div class="col-auto">
           <div class="btn-group" role="group">
 
-            <form action="/board/{{id}}/updateForm" method="get">
+            <form action="/board/{{dtos.0.boardId}}/updateForm" method="get">
               <button type="submit" class="btn btn-warning text-white">수정</button>
             </form>
 
-            <form action="/board/{{id}}/delete" method="post" class="px-1">
+            <form action="/board/{{dtos.0.boardId}}/delete" method="post" class="px-1">
               <button type="submit" class="btn btn-danger text-white">삭제</button>
             </form>
 
@@ -41,63 +40,76 @@
     <div class="card-body">
       <div>
         <div class="form-control" style="min-height:300px">
-          {{content}}
+          {{dtos.0.boardContent}}
         </div>
       </div>
     </div>
   </div>
-  {{/board}}
 
   <div class="card mt-3 bg-light">
-    <form action="/join" method="post" enctype="application/x-www-form-urlencoded" class="d-flex">
+    <form action="/reply/save" method="post" class="d-flex">
+
+      <!-- /board/여기에/reply/save 이런식으로 받아와도 되긴하지만, @PathVariable은 가급적 쿼리 where에 걸꺼만 -->
+      <input type="hidden" name="boardId" value="{{dtos.0.boardId}}">
+
       <div class="card-body flex-grow-1">
-        <input type="text" class="form-control" placeholder="댓글을 입력하세요." name="reply">
+        <textarea class="form-control" rows="2" placeholder="댓글을 입력하세요." name="comment" required maxlength="100"></textarea>
       </div>
-      <div class="p-3"><button type="submit" class="btn btn-primary">댓글 등록</button></div>
+
+      <div class="p-3">
+        <button type="submit" class="btn btn-primary">댓글 등록</button>
+      </div>
+
     </form>
   </div>
 
-
+  {{#dtos}}
+  {{#replyId}}
+  
   <div class="card mt-3 bg-light">
       <div class="card-body row align-items-center">
         <div class="col-auto">
           <div class="form-control">
-            작성자
+            {{replyUserUsername}}
           </div>
         </div>
         <div class="col">
           <div class="form-control">
-            댓글내용
+            {{replyComment}}
           </div>
         </div>
-        <div class="col-auto">
-          <a href="#" class="btn btn-warning text-white">수정</a>
-          <a href="#" class="btn btn-danger">삭제</a>
+
+        {{#replyOwner}}
+        <div class="replyDelete col-auto">
+
+          <form class="replyAll" sessionUserId={{sessionUserId}} replyUserId={{replyUserId}} action="/reply/{{replyId}}/delete" method="post">
+            <button type="submit" class="btn btn-danger text-white">삭제</button>
+          </form>
+
         </div>
+        {{/replyOwner}}
+
     </div>
   </div>
 
-
-  <div class="card mt-3 bg-light">
-      <div class="card-body row align-items-center">
-        <div class="col-auto">
-          <div class="form-control">
-            작성자
-          </div>
-        </div>
-        <div class="col">
-          <div class="form-control">
-            댓글내용
-          </div>
-        </div>
-        <div class="col-auto">
-          <a href="#" class="btn btn-warning text-white">수정</a>
-          <a href="#" class="btn btn-danger">삭제</a>
-        </div>
-    </div>
-  </div>
-
+  {{/replyId}}
+  {{/dtos}}
 
 </div>
 
 {{> /layout/footer}}
+
+<!--
+<script>
+  let replyAll = document.querySelectorAll('.replyAll');
+
+  replyAll.forEach(element => {
+    let sessionUserId = element.getAttribute('sessionUserId');
+    let replyUserId = element.getAttribute('replyUserId');
+    console.log("로그인한아이디:"+sessionUserId+" 리플쓴아이디:"+replyUserId);
+    if(sessionUserId != replyUserId){
+      element.style.display = 'none';
+    }
+  });
+</script>
+-->

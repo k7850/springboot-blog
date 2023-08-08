@@ -76,7 +76,7 @@ public class UserController {
             // System.out.println("테스트성공"+user.getId()+"/"+user.getUsername()+"/"+user.getPassword()+"/"+user.getEmail());
             return "redirect:/";
         } catch (Exception e) {
-            System.out.println("테스트 실패");
+            // System.out.println("테스트 실패");
             return "redirect:/exLogin";
         }
     }

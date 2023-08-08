@@ -53,16 +53,16 @@ public class UserRepository {
 
     @Transactional // db작업 전부 정상적으로 종료되면 커밋, 예외가 발생하면 롤백 / DB 변경(C,U,D) 있는데 @Transactional 빼먹으면 오류뜸
     public void save(JoinDTO joinDTO) {
-        System.out.println("테스트:" + 1);
+        // System.out.println("테스트:" + 1);
         Query query = em.createNativeQuery(
                 "insert into user_tb(username, password, email) values(:username, :password, :email)");
-        System.out.println("테스트:" + 2);
+        // System.out.println("테스트:" + 2);
         query.setParameter("username", joinDTO.getUsername());
         query.setParameter("password", joinDTO.getPassword());
         query.setParameter("email", joinDTO.getEmail());
-        System.out.println("테스트:" + 3);
+        // System.out.println("테스트:" + 3);
         query.executeUpdate(); // 쿼리를 전송 (DBMS에게)
-        System.out.println("테스트:" + 4);
+        // System.out.println("테스트:" + 4);
     }
 
     public User findById(int id) {
