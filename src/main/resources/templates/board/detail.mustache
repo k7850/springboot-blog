@@ -83,6 +83,7 @@
         <div class="replyDelete col-auto">
 
           <form class="replyAll" sessionUserId={{sessionUserId}} replyUserId={{replyUserId}} action="/reply/{{replyId}}/delete" method="post">
+            <input type="hidden" name="boardId" value="{{boardId}}">
             <button type="submit" class="btn btn-danger text-white">삭제</button>
           </form>
 

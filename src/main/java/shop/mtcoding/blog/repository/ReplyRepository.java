@@ -10,8 +10,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import shop.mtcoding.blog.dto.ReplyWriteDTO;
-import shop.mtcoding.blog.dto.WriteDTO;
-import shop.mtcoding.blog.model.Board;
 import shop.mtcoding.blog.model.Reply;
 
 @Repository

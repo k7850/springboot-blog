@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import shop.mtcoding.blog.dto.ReplyWriteDTO;
-import shop.mtcoding.blog.model.Board;
 import shop.mtcoding.blog.model.Reply;
 import shop.mtcoding.blog.model.User;
 import shop.mtcoding.blog.repository.ReplyRepository;
@@ -55,7 +54,13 @@ public class ReplyController {
 
 
     @PostMapping("/reply/{id}/delete")
-    public String deleteReply(@PathVariable Integer id) { // 1. PathVariable 값 받기
+    public String deleteReply(@PathVariable Integer id, Integer boardId) { // 1. PathVariable 값 받기
+
+        // 1. 유효성검사
+        // http body가 있으면 유효성 검사 필요함(미리 걸러내기)
+        if (boardId == null || boardId<0) {
+            return "redirect:/40x";
+        }
 
         // 2. 인증검사
         // session에 접근해서 sessionUser 키값 가져오기
@@ -74,7 +79,7 @@ public class ReplyController {
         // 4. 모델에 접근해서 삭제
         replyRepository.deleteById(id);
 
-        return "redirect:/board/"+reply.getBoard().getId();
+        return "redirect:/board/"+boardId;
     }
 
 

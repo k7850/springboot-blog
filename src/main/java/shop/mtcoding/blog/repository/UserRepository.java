@@ -1,7 +1,5 @@
 package shop.mtcoding.blog.repository;
 
-import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
@@ -12,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import shop.mtcoding.blog.dto.JoinDTO;
 import shop.mtcoding.blog.dto.LoginDTO;
 import shop.mtcoding.blog.dto.UserUpdateDTO;
-import shop.mtcoding.blog.model.Board;
 import shop.mtcoding.blog.model.User;
 
 // BoardController, UserController, UserRepository : 내가 어노테이션 적어서 IoC에 올린거

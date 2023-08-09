@@ -1,9 +1,6 @@
 package shop.mtcoding.blog.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -23,9 +20,7 @@ import shop.mtcoding.blog.model.User;
 import shop.mtcoding.blog.repository.BoardRepository;
 import shop.mtcoding.blog.repository.ReplyRepository;
 
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class BoardController {
@@ -146,7 +141,18 @@ public class BoardController {
             return "redirect:/40x"; // 403 에러 권한없음
         }
 
+        
         // 4. 모델에 접근해서 삭제
+
+
+        // 리플 있으면 삭제 안돼니까 글이랑 연결 끊기
+        List<Reply> replyList = replyRepository.findByboardId(id);
+        for (Reply reply : replyList) {
+            reply.setBoard(null);
+        }
+
+
+
         boardRepository.deleteById(id);
 
         return "redirect:/";

@@ -1,25 +1,20 @@
 package shop.mtcoding.blog.repository;
 
 import java.math.BigInteger;
-import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import org.hibernate.type.descriptor.sql.BigIntTypeDescriptor;
 import org.qlrm.mapper.JpaResultMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import shop.mtcoding.blog.dto.BoardDetailDTO;
-import shop.mtcoding.blog.dto.LoginDTO;
 import shop.mtcoding.blog.dto.UpdateDTO;
 import shop.mtcoding.blog.dto.WriteDTO;
 import shop.mtcoding.blog.model.Board;
-import shop.mtcoding.blog.model.User;
 
 @Repository
 public class BoardRepository {

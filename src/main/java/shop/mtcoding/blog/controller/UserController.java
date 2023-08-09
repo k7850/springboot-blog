@@ -1,9 +1,9 @@
 package shop.mtcoding.blog.controller;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -68,11 +68,25 @@ public class UserController {
             return "redirect:/40x";
         }
 
+
+
+
+
         // 핵심 기능
         try {
-            User user = userRepository.findByUsernameAndPassword(loginDTO);
-            session.setAttribute("sessionUser", user);
+            User user = userRepository.findByUsername(loginDTO.getUsername());
 
+            
+            boolean isValid = BCrypt.checkpw(loginDTO.getPassword(), user.getPassword());
+            System.out.println("테스트 : "+isValid);
+
+            if(isValid){
+                session.setAttribute("sessionUser", user);
+            } else{
+                // System.out.println("테스트 : 비번틀림 / "+loginDTO.getPassword()+" / "+user.getPassword());
+                throw new Exception();
+            }
+            
             // System.out.println("테스트성공"+user.getId()+"/"+user.getUsername()+"/"+user.getPassword()+"/"+user.getEmail());
             return "redirect:/";
         } catch (Exception e) {
@@ -106,6 +120,12 @@ public class UserController {
         if(user!=null){
             return "redirect:/50x";
         }
+
+        
+
+        joinDTO.setPassword(BCrypt.hashpw(joinDTO.getPassword(), BCrypt.gensalt()));
+
+
         userRepository.save(joinDTO); // 핵심 기능
         return "redirect:/loginForm";
     }
@@ -191,8 +211,6 @@ public class UserController {
      
         User user = userRepository.findById(id);
 
-        System.out.println("테스트:DTO:"+DTO);
-        System.out.println("테스트:user:"+user);
 
         // db수정이 있으면 유효성 검사 해야함
         if (DTO.getPassword() == null || DTO.getPassword().isEmpty()) {
@@ -218,9 +236,11 @@ public class UserController {
 
 
 
-        if(!(DTO.getPassword().equals(user.getPassword()))){
+
+        if(!(BCrypt.checkpw(DTO.getPassword(), user.getPassword()))){
             return "redirect:/user/"+id+"/updateForm";
         }
+        DTO.setNewPassword(BCrypt.hashpw(DTO.getNewPassword(), BCrypt.gensalt()));
 
         userRepository.updateUser(DTO, id);
 
