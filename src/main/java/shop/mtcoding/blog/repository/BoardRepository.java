@@ -101,6 +101,24 @@ public class BoardRepository {
         return count.intValue();
     }
 
+    public Integer count(String keyword, Integer keywordUserId){
+        Query query;
+        if(keywordUserId==null){
+            query = em.createNativeQuery("select count(*) from board_tb where title like :keyword");
+        }else{
+            query = em.createNativeQuery("select count(*) from board_tb where title like :keyword or user_id like :keywordUserId");
+            query.setParameter("keywordUserId", keywordUserId);
+        }
+
+        // 원래는 Object배열로 리턴받는다, Object배열은 칼럼의 연속이다
+        // 그룹함수를 써서 하나의 칼럼을 조회하면, Object로 리턴된다
+        query.setParameter("keyword", "%"+keyword+"%");
+
+        BigInteger count = (BigInteger) query.getSingleResult();
+        // System.out.println("카운트 :"+count);
+        return count.intValue();
+    }
+
     public int count2() {
         // Entity(Board, User) 타입이 아니어도, 기본 자료형도 안되더라
         Query query = em.createNativeQuery("select * from board_tb", Board.class);
@@ -109,11 +127,31 @@ public class BoardRepository {
     }
 
     public List<Board> findAll(int page){
-        final int SIZE = 6;
+        final int SIZE = 3;
         // page는 시작 인덱스 번호(1아니고 0부터 시작), size는 페이징할 개수(페이지 넘겨도 보이는 글 개수는 같으니까 상수가 좋다)
         Query query = em.createNativeQuery("select * from board_tb order by id desc limit :page, :size", Board.class);
         query.setParameter("page", page*SIZE);
         query.setParameter("size", SIZE);
+
+        return query.getResultList();
+        
+    }
+
+    public List<Board> findAll(int page, String keyword, Integer keywordUserId){
+        final int SIZE = 3;
+        // page는 시작 인덱스 번호(1아니고 0부터 시작), size는 페이징할 개수(페이지 넘겨도 보이는 글 개수는 같으니까 상수가 좋다)
+        
+        Query query;
+        if(keywordUserId==null){
+            query = em.createNativeQuery("select * from board_tb where title like :keyword order by id desc limit :page, :size", Board.class);
+        } else{
+            query = em.createNativeQuery("select * from board_tb where user_id like :keywordUserId or title like :keyword order by CASE WHEN user_id LIKE :keywordUserId THEN 1 ELSE 2 END, id desc limit :page, :size", Board.class);
+            query.setParameter("keywordUserId", keywordUserId);
+        }
+
+        query.setParameter("page", page*SIZE);
+        query.setParameter("size", SIZE);
+        query.setParameter("keyword", "%"+keyword+"%");
 
         return query.getResultList();
         

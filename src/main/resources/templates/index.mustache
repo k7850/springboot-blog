@@ -2,6 +2,11 @@
 
 <div class="container p-3">
 
+  <form class="d-flex mb-3 w-25" action="/" method="get">
+    <input class="form-control me-2 col-auto" type="text" name="keyword" {{#keyword}}value="{{keyword}}"{{/keyword}} placeholder="Search" required>
+    <button class="btn btn-primary col">Search</button>
+  </form>
+
   {{#boardList}}
   <div class="card bg-light mb-3">
     <div class="card-body">
@@ -33,8 +38,15 @@
   
 
   <ul class="pagination d-flex justify-content-center">
+    {{#keyword}}
+    <li class="page-item {{#first}}disabled{{/first}}"><a class="page-link text-dark" href="?keyword={{keyword}}&page={{prevPage}}">이전 페이지</a></li>
+    <li class="page-item {{#last}}disabled{{/last}}"><a class="page-link text-dark" href="?keyword={{keyword}}&page={{nextPage}}">다음 페이지</a></li>
+    {{/keyword}}
+
+    {{^keyword}}
     <li class="page-item {{#first}}disabled{{/first}}"><a class="page-link text-dark" href="?page={{prevPage}}">이전 페이지</a></li>
     <li class="page-item {{#last}}disabled{{/last}}"><a class="page-link text-dark" href="?page={{nextPage}}">다음 페이지</a></li>
+    {{/keyword}}
   </ul>
 
 

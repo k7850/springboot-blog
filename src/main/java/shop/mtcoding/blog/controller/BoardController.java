@@ -19,6 +19,7 @@ import shop.mtcoding.blog.model.Reply;
 import shop.mtcoding.blog.model.User;
 import shop.mtcoding.blog.repository.BoardRepository;
 import shop.mtcoding.blog.repository.ReplyRepository;
+import shop.mtcoding.blog.repository.UserRepository;
 
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -32,20 +33,45 @@ public class BoardController {
     private BoardRepository boardRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private ReplyRepository replyRepository;
 
     @GetMapping({ "/", "/board" })
-    public String index(@RequestParam(defaultValue = "0") Integer page, HttpServletRequest request) {
+    public String index(@RequestParam(defaultValue = "") String keyword, @RequestParam(defaultValue = "0") Integer page, HttpServletRequest request) {
         // @RequestParam(defaultValue = "0") : 디폴트값 0으로 (/?page=0)
 
         // 1. 유효성 검사 x (get요청이라 http body 데이터가 없으니까)
         // 2. 인증 검사 x (로그인 안해도 볼 수 있게 할꺼니까)
 
-        List<Board> boardList = boardRepository.findAll(page);
-        int totalCount = boardRepository.count();
+        
+        List<Board> boardList = null;
+        int totalCount = 0;
+
+        if(keyword.isEmpty()){
+            boardList = boardRepository.findAll(page);
+            totalCount = boardRepository.count();
+        }else{
+
+            User keywordUser = userRepository.findByUsername(keyword);
+
+            if(keywordUser==null){
+                boardList = boardRepository.findAll(page, keyword, null);
+                totalCount = boardRepository.count(keyword, null);
+            }else{
+                Integer keywordUserId = keywordUser.getId();
+                boardList = boardRepository.findAll(page, keyword, keywordUserId);
+                totalCount = boardRepository.count(keyword, keywordUserId);
+            }
+
+            
+            request.setAttribute("keyword", keyword);
+        }
+
 
         boolean last = false;
-        if (totalCount <= (page + 1) * 6) {
+        if (totalCount <= (page + 1) * 3) {
             last = true;
         }
 

@@ -185,7 +185,6 @@ public class UserController {
     @GetMapping("/user/{id}/updateForm")
     public String userUpdateForm(@PathVariable Integer id, HttpServletRequest request){
 
-        User user = userRepository.findById(id);
 
         // 1. 인증검사 (로그인 상태인가)
         User sessionUser = (User) session.getAttribute("sessionUser");
@@ -193,6 +192,8 @@ public class UserController {
             return "redirect:/loginForm"; // 401 에러
         }
 
+        User user = userRepository.findById(id);
+        
         // 2. 권한검사 (로그인과 수정하려는게 일치한가)
         if (sessionUser.getId() != user.getId()) {
             return "redirect:/40x"; // 403 에러 권한없음
