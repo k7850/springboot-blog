@@ -38,12 +38,11 @@
     
     
     <div class="card-body">
-      <div>
-        <div class="form-control" style="min-height:300px">
-          {{dtos.0.boardContent}}
-        </div>
+      <div id="boardContent" class="rounded border bg-white p-3 flex-grow-1">
+        {{dtos.0.boardContent}}
       </div>
     </div>
+    
   </div>
 
   <div class="card mt-3 bg-light">
@@ -99,6 +98,18 @@
 </div>
 
 {{> /layout/footer}}
+
+<script>
+  let boardContent = document.querySelector('#boardContent');
+  boardContent.innerHTML = boardContent.innerHTML.replaceAll('&lt;br&gt;', '<br>');
+</script>
+
+
+
+
+
+
+
 
 <!--
 <script>

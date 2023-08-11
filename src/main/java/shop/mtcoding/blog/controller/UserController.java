@@ -59,7 +59,6 @@ public class UserController {
 
     @PostMapping("/login")
     public String login(LoginDTO loginDTO){
-
         // validation check (유효성 검사)
         if(loginDTO.getUsername() == null || loginDTO.getUsername().isEmpty()){
             return "redirect:/40x";
@@ -68,27 +67,21 @@ public class UserController {
             return "redirect:/40x";
         }
 
-
-
-
-
         // 핵심 기능
         try {
             User user = userRepository.findByUsername(loginDTO.getUsername());
 
-            
             boolean isValid = BCrypt.checkpw(loginDTO.getPassword(), user.getPassword());
-            System.out.println("테스트 : "+isValid);
+            // System.out.println("테스트 : "+isValid);
 
             if(isValid){
                 session.setAttribute("sessionUser", user);
             } else{
-                // System.out.println("테스트 : 비번틀림 / "+loginDTO.getPassword()+" / "+user.getPassword());
                 throw new Exception();
             }
-            
-            // System.out.println("테스트성공"+user.getId()+"/"+user.getUsername()+"/"+user.getPassword()+"/"+user.getEmail());
+
             return "redirect:/";
+
         } catch (Exception e) {
             // System.out.println("테스트 실패");
             return "redirect:/exLogin";
@@ -101,7 +94,7 @@ public class UserController {
 
 /////////////////////////////////////////////////////////////////////////////////
     // 실무에서
-    @PostMapping("/join") // @PostMapping = 클라이언트가 서버로 데이터를 전송할 때
+    @PostMapping("/join")
     public String join(JoinDTO joinDTO) {
 
         // validation check (유효성 검사)
@@ -121,10 +114,7 @@ public class UserController {
             return "redirect:/50x";
         }
 
-        
-
         joinDTO.setPassword(BCrypt.hashpw(joinDTO.getPassword(), BCrypt.gensalt()));
-
 
         userRepository.save(joinDTO); // 핵심 기능
         return "redirect:/loginForm";
@@ -209,11 +199,9 @@ public class UserController {
     
     @PostMapping("/user/{id}/update")
     public String userUpdate(@PathVariable Integer id, UserUpdateDTO DTO){
-     
         User user = userRepository.findById(id);
 
-
-        // db수정이 있으면 유효성 검사 해야함
+        // 유효성 검사
         if (DTO.getPassword() == null || DTO.getPassword().isEmpty()) {
             return "redirect:/40x";
         }
@@ -235,9 +223,7 @@ public class UserController {
             return "redirect:/40x"; // 403 에러 권한없음
         }
 
-
-
-
+        // 핵심로직
         if(!(BCrypt.checkpw(DTO.getPassword(), user.getPassword()))){
             return "redirect:/user/"+id+"/updateForm";
         }

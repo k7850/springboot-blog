@@ -45,11 +45,15 @@ public class BoardController {
         // 1. 유효성 검사 x (get요청이라 http body 데이터가 없으니까)
         // 2. 인증 검사 x (로그인 안해도 볼 수 있게 할꺼니까)
 
-        
+        // System.out.println("테스트 : keyword : " + keyword);
+        // System.out.println("테스트 : keyword length : " + keyword.length());
+        // System.out.println("테스트 : keyword isEmpty : " + keyword.isEmpty());
+        // System.out.println("테스트 : keyword isBlank : " + keyword.isBlank());
+
         List<Board> boardList = null;
         int totalCount = 0;
 
-        if(keyword.isEmpty()){
+        if(keyword.isEmpty() || keyword.isBlank()){
             boardList = boardRepository.findAll(page);
             totalCount = boardRepository.count();
         }else{
@@ -57,8 +61,8 @@ public class BoardController {
             User keywordUser = userRepository.findByUsername(keyword);
 
             if(keywordUser==null){
-                boardList = boardRepository.findAll(page, keyword, null);
-                totalCount = boardRepository.count(keyword, null);
+                boardList = boardRepository.findAll(page, keyword);
+                totalCount = boardRepository.count(keyword);
             }else{
                 Integer keywordUserId = keywordUser.getId();
                 boardList = boardRepository.findAll(page, keyword, keywordUserId);
@@ -103,6 +107,8 @@ public class BoardController {
             return "redirect:/loginForm";
         }
 
+        writeDTO.setContent(writeDTO.getContent().replaceAll("\r\n", "&lt;br&gt;"));
+
         boardRepository.save(writeDTO, sessionUser.getId());
         return "redirect:/";
     }
@@ -126,6 +132,7 @@ public class BoardController {
             dtos = boardRepository.findByIdJoinReply(id, null);
         } else {
             dtos = boardRepository.findByIdJoinReply(id, sessionUser.getId());
+            
         }
 
         boolean pageOwner = false;
@@ -133,6 +140,9 @@ public class BoardController {
             pageOwner = sessionUser.getId() == dtos.get(0).getBoardUserId();
         }
 
+        dtos.get(0).setBoardContent(dtos.get(0).getBoardContent().replaceAll("&lt;br&gt;", "<br>"));
+
+        
         request.setAttribute("dtos", dtos);
         request.setAttribute("pageOwner", pageOwner);
 
@@ -141,6 +151,8 @@ public class BoardController {
         } else{
             request.setAttribute("sessionUserId", -1);
         }
+
+        
 
         request.setAttribute("nameUser", boardRepository.findById(id).getUser().getUsername());
         return "board/detail"; // MVC중 V
@@ -200,6 +212,8 @@ public class BoardController {
             return "redirect:/40x"; // 403 에러 권한없음
         }
 
+        board.setContent(board.getContent().replaceAll("&lt;br&gt;", "\r\n"));
+
         request.setAttribute("board", board);
         return "board/updateForm";
     }
@@ -227,6 +241,8 @@ public class BoardController {
         }
 
         // 핵심로직
+        updateDTO.setContent(updateDTO.getContent().replaceAll("\r\n", "&lt;br&gt;"));
+
         boardRepository.updateBoard(updateDTO, id);
         return "redirect:/board/" + id;
     }

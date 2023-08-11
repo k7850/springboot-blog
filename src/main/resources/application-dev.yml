@@ -1,5 +1,8 @@
 server:
   servlet:
+    session: # 첫로그인할때 세션아이디 오류나는거 https://jaimemin.tistory.com/1516
+      timeout: 30m #
+      tracking-modes: cookie #
     encoding:
       charset: utf-8
       force: true
