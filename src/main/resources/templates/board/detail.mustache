@@ -35,14 +35,14 @@
 
       </div>
     </div>
-    
-    
+
+
     <div class="card-body">
       <div id="boardContent" class="rounded border bg-white p-3 flex-grow-1">
         {{dtos.0.boardContent}}
       </div>
     </div>
-    
+
   </div>
 
   <div class="card mt-3 bg-light">
@@ -52,7 +52,8 @@
       <input type="hidden" name="boardId" value="{{dtos.0.boardId}}">
 
       <div class="card-body flex-grow-1">
-        <textarea class="form-control" rows="2" placeholder="댓글을 입력하세요." name="comment" required maxlength="100"></textarea>
+        <textarea class="form-control" rows="2" placeholder="댓글을 입력하세요." name="comment" required
+          maxlength="100"></textarea>
       </div>
 
       <div class="p-3">
@@ -64,30 +65,31 @@
 
   {{#dtos}}
   {{#replyId}}
-  
+
   <div class="card mt-3 bg-light">
-      <div class="card-body row align-items-center">
-        <div class="col-auto">
-          <div class="form-control">
-            {{replyUserUsername}}
-          </div>
+    <div class="card-body row align-items-center">
+      <div class="col-auto">
+        <div class="form-control">
+          {{replyUserUsername}}
         </div>
-        <div class="col">
-          <div class="form-control">
-            {{replyComment}}
-          </div>
+      </div>
+      <div class="col">
+        <div class="form-control">
+          {{replyComment}}
         </div>
+      </div>
 
-        {{#replyOwner}}
-        <div class="replyDelete col-auto">
+      {{#replyOwner}}
+      <div class="replyDelete col-auto">
 
-          <form class="replyAll" sessionUserId={{sessionUserId}} replyUserId={{replyUserId}} action="/reply/{{replyId}}/delete" method="post">
-            <input type="hidden" name="boardId" value="{{boardId}}">
-            <button type="submit" class="btn btn-danger text-white">삭제</button>
-          </form>
+        <form class="replyAll" sessionUserId={{sessionUserId}} replyUserId={{replyUserId}}
+          action="/reply/{{replyId}}/delete" method="post">
+          <input type="hidden" name="boardId" value="{{boardId}}">
+          <button type="submit" class="btn btn-danger text-white">삭제</button>
+        </form>
 
-        </div>
-        {{/replyOwner}}
+      </div>
+      {{/replyOwner}}
 
     </div>
   </div>

@@ -1,22 +1,22 @@
 {{> /layout/header}}
 
 <div class="container p-5">
-<!-- localhost:8080/board/save ,  post로 요청됨 -->
-<!-- title=입력값&content=입력값 -->
-<div class="card">
-  <div class="card-header"><b>글쓰기 화면입니다</b></div>
-  <div class="card-body">
-  <form action="/board/save" method="post" enctype="application/x-www-form-urlencoded">
-    <div class="mb-3">
-      <input type="text" class="form-control" placeholder="제목을 입력하세요." name="title" required maxlength="100">
+  <!-- localhost:8080/board/save ,  post로 요청됨 -->
+  <!-- title=입력값&content=입력값 -->
+  <div class="card">
+    <div class="card-header"><b>글쓰기 화면입니다</b></div>
+    <div class="card-body">
+      <form action="/board/save" method="post" enctype="application/x-www-form-urlencoded">
+        <div class="mb-3">
+          <input type="text" class="form-control" placeholder="제목을 입력하세요." name="title" required maxlength="100">
+        </div>
+        <div class="mb-3">
+          <textarea class="form-control" rows="15" name="content" placeholder="내용을 입력하세요."></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary form-control">작성하기</button>
+      </form>
     </div>
-    <div class="mb-3">
-      <textarea class="form-control" rows="15" name="content" placeholder="내용을 입력하세요."></textarea>
-    </div>
-    <button type="submit" class="btn btn-primary form-control">작성하기</button>
-  </form>
-</div>
-</div>
+  </div>
 </div>
 
 {{> /layout/footer}}
